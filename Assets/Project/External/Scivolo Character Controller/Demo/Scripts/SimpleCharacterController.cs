@@ -8,6 +8,9 @@ namespace MenteBacata.ScivoloCharacterControllerDemo
 {
     public class SimpleCharacterController : MonoBehaviour
     {
+        [SerializeField] Animator animator;
+        public Animator Animator { get => animator; }
+
         public float moveSpeed = 5f;
 
         public float jumpSpeed = 8f;
@@ -100,6 +103,7 @@ namespace MenteBacata.ScivoloCharacterControllerDemo
                 velocity += verticalSpeed * transform.up;
             }
 
+            animator.SetFloat("MoveSpeed", new Vector3(velocity.x, 0, velocity.z).magnitude / moveSpeed);
             RotateTowards(velocity);
 
             mover.Move(velocity * deltaTime, groundDetected, groundInfo, overlapCount, overlaps, moveContacts, out contactCount);
