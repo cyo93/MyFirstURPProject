@@ -85,16 +85,15 @@ namespace MenteBacata.ScivoloCharacterControllerDemo
             {
                 mover.mode = CharacterMover.Mode.Walk;
                 verticalSpeed = 0f;
-
+                animator.SetBool("IsJumping", false);
                 if (groundDetected)
                     isOnMovingPlatform = groundInfo.collider.TryGetComponent(out movingPlatform);
             }
             else
             {
                 mover.mode = CharacterMover.Mode.SimpleSlide;
-
                 BounceDownIfTouchedCeiling();
-
+                animator.SetBool("IsJumping", true);
                 verticalSpeed += gravity * deltaTime;
 
                 if (verticalSpeed < minVerticalSpeed)
