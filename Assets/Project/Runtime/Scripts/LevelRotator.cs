@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using MenteBacata.ScivoloCharacterController;
+using MenteBacata.ScivoloCharacterControllerDemo;
 
-namespace MenteBacata.ScivoloCharacterControllerDemo
+namespace HeroicArcade.CC.Core
 {
     public class LevelRotator : MonoBehaviour
     {

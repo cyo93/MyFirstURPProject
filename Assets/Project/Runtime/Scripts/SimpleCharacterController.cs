@@ -1,15 +1,22 @@
 ﻿//#define MB_DEBUG
 
 using MenteBacata.ScivoloCharacterController;
+using MenteBacata.ScivoloCharacterControllerDemo;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MenteBacata.ScivoloCharacterControllerDemo
+
+namespace HeroicArcade.CC.Core
+
+
 {
     public class SimpleCharacterController : MonoBehaviour
     {
         [SerializeField] Animator animator;
         public Animator Animator { get => animator; }
+
+        [SerializeField] InputController inputController;
+        public InputController InputController { get => inputController; }
 
         public float moveSpeed = 5f;
 
@@ -74,7 +81,7 @@ namespace MenteBacata.ScivoloCharacterControllerDemo
 
             isOnMovingPlatform = false;
 
-            if (isGrounded && Input.GetButtonDown("Jump"))
+            if (isGrounded && inputController.IsJumpPressed)
             {
                 verticalSpeed = jumpSpeed;
                 nextUngroundedTime = -1f;
