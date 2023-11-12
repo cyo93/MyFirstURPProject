@@ -62,7 +62,7 @@ namespace HeroicArcade.CC.Core
         {
             Camera.main.GetComponent<OrbitingCamera>().enabled = enabled;
 
-            FindObjectOfType<SimpleCharacterController>().enabled = enabled;
+            FindObjectOfType<AvatarController>().enabled = enabled;
 
             foreach (var m in FindObjectsOfType<MovingPlatform>())
             {

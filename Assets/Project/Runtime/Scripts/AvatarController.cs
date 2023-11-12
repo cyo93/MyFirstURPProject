@@ -1,27 +1,24 @@
-﻿//#define MB_DEBUG
-
+﻿using UnityEngine;
 using MenteBacata.ScivoloCharacterController;
 using MenteBacata.ScivoloCharacterControllerDemo;
-using System.Collections.Generic;
-using UnityEngine;
-
+//using MenteBacata.ScivoloCharacterControllerDemo;
+using System.Text.RegularExpressions;
+using Cinemachine;
+using System.Collections;
 
 namespace HeroicArcade.CC.Core
-
-
 {
-    public class SimpleCharacterController : MonoBehaviour
+    public class AvatarController : MonoBehaviour
     {
-        [SerializeField] Animator animator;
-        public Animator Animator { get => animator; }
-
-        [SerializeField] InputController inputController;
-        public InputController InputController { get => inputController; }
+        public Character Character { get; private set; }
+        
+        [SerializeField] CinemachineFreeLook cinemachineFreeLook;     // Recenter X (World Space)
+        [SerializeField] SimpleFollowRecenterX simpleFollowRecenterX; // Recenter X (Simple Follow With World Up)
 
         public float moveSpeed = 5f;
 
         public float jumpSpeed = 8f;
-        
+
         public float rotationSpeed = 720f;
 
         public float gravity = -25f;
@@ -59,20 +56,40 @@ namespace HeroicArcade.CC.Core
 
         private MovingPlatform movingPlatform;
 
+        private void Awake()
+        {
+            Character = GetComponent<Character>();
+            if (cinemachineFreeLook.m_BindingMode == CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp)
+            {
+                if (simpleFollowRecenterX == null)
+                {
+                    Debug.LogError("Unable to OnCameraRecenterX() because CinemachineTransposer.BindingMode is SimpleFollowWithWorldUp, but SimpleFollowRecenterX component is null");
+                }
+                else
+                {
+                    simpleFollowRecenterX.enabled = true;
+                }
+            }
+        }
 
         private void Start()
         {
             cameraTransform = Camera.main.transform;
             mover.canClimbSteepSlope = true;
         }
-
+	
         private void Update()
         {
             float deltaTime = Time.deltaTime;
             Vector3 movementInput = GetMovementInput();
 
+            Character.velocityXZ += Character.MoveAcceleration * deltaTime;
+            if (Character.velocityXZ > Character.CurrentMaxMoveSpeed)
+                Character.velocityXZ = Character.CurrentMaxMoveSpeed;
+
             Vector3 velocity = moveSpeed * movementInput;
-            
+
+            Character.velocity = Character.velocityXZ * movementInput;
             HandleOverlaps();
 
             bool groundDetected = DetectGroundAndCheckIfGrounded(out bool isGrounded, out GroundInfo groundInfo);
@@ -81,7 +98,7 @@ namespace HeroicArcade.CC.Core
 
             isOnMovingPlatform = false;
 
-            if (isGrounded && inputController.IsJumpPressed)
+            if (isGrounded && Character.InputController.IsJumpPressed)
             {
                 verticalSpeed = jumpSpeed;
                 nextUngroundedTime = -1f;
@@ -90,17 +107,20 @@ namespace HeroicArcade.CC.Core
 
             if (isGrounded)
             {
+            	Character.Animator.SetBool("IsJumping", false);
                 mover.mode = CharacterMover.Mode.Walk;
                 verticalSpeed = 0f;
-                animator.SetBool("IsJumping", false);
+
                 if (groundDetected)
                     isOnMovingPlatform = groundInfo.collider.TryGetComponent(out movingPlatform);
             }
             else
             {
+            	Character.Animator.SetBool("IsJumping", true);
                 mover.mode = CharacterMover.Mode.SimpleSlide;
+
                 BounceDownIfTouchedCeiling();
-                animator.SetBool("IsJumping", true);
+
                 verticalSpeed += gravity * deltaTime;
 
                 if (verticalSpeed < minVerticalSpeed)
@@ -109,28 +129,62 @@ namespace HeroicArcade.CC.Core
                 velocity += verticalSpeed * transform.up;
             }
 
-            animator.SetFloat("MoveSpeed", new Vector3(velocity.x, 0, velocity.z).magnitude / moveSpeed);
-            RotateTowards(velocity);
+            if (isGrounded)
+            {
+                if (movementInput.sqrMagnitude < 1E-06f)
+                {
+                    Character.velocityXZ = 0f;
+                    //Character.Animator.SetBool("IsSprintPressed", false);
+                }
 
+                Character.Animator.SetFloat("MoveSpeed",
+                    new Vector3(Character.velocity.x, 0, Character.velocity.z).magnitude / Character.CurrentMaxMoveSpeed);
+
+                if (Character.velocityXZ >= 1E-06f)
+                {
+                    //Character.Animator.SetBool("IsSprintPressed", Character.InputController.IsSprintPressed);
+                }
+
+                Character.CurrentMaxMoveSpeed = Character.CurrentMaxWalkSpeed;
+            }
+
+            RotateTowards(velocity);
             mover.Move(velocity * deltaTime, groundDetected, groundInfo, overlapCount, overlaps, moveContacts, out contactCount);
+
+            Character.CurrentMaxMoveSpeed = 3;
+            Character.Animator.SetFloat("MoveSpeed",
+                new Vector3(Character.velocity.x, 0, Character.velocity.z).magnitude / Character.CurrentMaxMoveSpeed);
         }
 
         private void LateUpdate()
         {
+            if (Character.InputController.IsAimPressed){
+            	cinemachineFreeLook.m_Priority = 1;
+            }
+            else{
+                cinemachineFreeLook.m_Priority = 10;
+            }
             if (isOnMovingPlatform)
                 ApplyPlatformMovement(movingPlatform);
         }
 
         private Vector3 GetMovementInput()
         {
-            float x = Input.GetAxis("Horizontal");
-            float y = Input.GetAxis("Vertical");
-
+            float x = currentMovement.x; // 0; // Input.GetAxis("Horizontal");
+            float y = currentMovement.z; //0; // Input.GetAxis("Vertical");
             Vector3 forward = Vector3.ProjectOnPlane(cameraTransform.forward, transform.up).normalized;
             Vector3 right = Vector3.Cross(transform.up, forward);
-
             return x * right + y * forward;
         }
+
+        Vector3 projectedCameraForward;
+        Quaternion rotationToCamera;
+        //private Vector3 GetMovementInput()
+        //{
+        //    projectedCameraForward = Vector3.ProjectOnPlane(cameraTransform.forward, transform.up);
+        //    rotationToCamera = Quaternion.LookRotation(projectedCameraForward, transform.up);
+        //    return rotationToCamera * (currentMovement.x * Vector3.right + currentMovement.z * Vector3.forward);
+        //}
 
         private void HandleOverlaps()
         {
@@ -166,7 +220,7 @@ namespace HeroicArcade.CC.Core
                 groundedIndicator.material.color = isGrounded ? Color.green : Color.blue;
         }
 
-        private void RotateTowards(Vector3 direction)
+        private void RotateTowards(in Vector3 direction)
         {
             Vector3 flatDirection = Vector3.ProjectOnPlane(direction, transform.up);
 
@@ -199,7 +253,7 @@ namespace HeroicArcade.CC.Core
             else
                 deltaAngleUp = platformDeltaAngle * Mathf.Sign(axisDotUp);
         }
-        
+
         private void BounceDownIfTouchedCeiling()
         {
             for (int i = 0; i < contactCount; i++)
@@ -209,6 +263,50 @@ namespace HeroicArcade.CC.Core
                     verticalSpeed = -0.25f * verticalSpeed;
                     break;
                 }
+            }
+        }
+
+        private Vector3 currentMovement;
+        public void OnMoveInput(Vector2 moveInput)
+        {
+            //y needs to preserve its value from the previous Update.
+            currentMovement.x = moveInput.x;
+            currentMovement.z = moveInput.y;
+        }
+
+        IEnumerator CameraRecenterX(float duration)
+        {
+            yield return new WaitForSeconds(duration);
+            cinemachineFreeLook.m_RecenterToTargetHeading.m_RecenteringTime = 0;
+            cinemachineFreeLook.m_RecenterToTargetHeading.m_enabled = false;
+        }
+
+        public void OnCameraRecenterX(bool isCameraRecenterXPressed)
+        {
+            switch (cinemachineFreeLook.m_BindingMode)
+            {
+                case CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp:
+                    if (isCameraRecenterXPressed)
+                        simpleFollowRecenterX.recenter = true;
+                    break;
+                case CinemachineTransposer.BindingMode.WorldSpace:
+                    if (cinemachineFreeLook.m_RecenterToTargetHeading.m_enabled)
+                    {
+                        if (!isCameraRecenterXPressed)
+                        {
+                            cinemachineFreeLook.m_RecenterToTargetHeading.m_RecenteringTime = 0;
+                            cinemachineFreeLook.m_RecenterToTargetHeading.m_enabled = false;
+                        }
+                    }
+                    else if (isCameraRecenterXPressed)
+                    {
+                        const float duration = 2; // 0.01f;
+                        cinemachineFreeLook.m_RecenterToTargetHeading.m_enabled = isCameraRecenterXPressed;
+                        cinemachineFreeLook.m_RecenterToTargetHeading.m_RecenteringTime = duration;
+                        cinemachineFreeLook.m_RecenterToTargetHeading.RecenterNow();
+                        StartCoroutine("CameraRecenterX", duration + 0.03f); //A very long period
+                    }
+                    break;
             }
         }
     }
