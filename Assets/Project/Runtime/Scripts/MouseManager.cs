@@ -10,6 +10,10 @@ public class MouseManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+
+    void Start(){
+    Cursor.lockState = CursorLockMode.Locked;
+}
     // Update is called once per frame
     void OnDisable()
     {
