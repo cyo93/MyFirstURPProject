@@ -13,8 +13,18 @@ namespace HeroicArcade.CC.Core
         public Character Character { get; private set; }
         
         [SerializeField] CinemachineFreeLook cinemachineFreeLook;     // Recenter X (World Space)
+        [SerializeField] CinemachineFreeLook cinemachineLeft;
+        [SerializeField] CinemachineFreeLook cinemachineRight;
         [SerializeField] SimpleFollowRecenterX simpleFollowRecenterX; // Recenter X (Simple Follow With World Up)
-
+	
+	 public enum AimCameraOffset
+        {
+            Left = 1,
+            Right = -1
+        }
+        
+        public AimCameraOffset aimCameraOffset = AimCameraOffset.Left;
+	
         public float moveSpeed = 5f;
 
         public float jumpSpeed = 8f;
@@ -80,6 +90,8 @@ namespace HeroicArcade.CC.Core
 	
         private void Update()
         {
+            Character.Animator.SetBool("IsAimPressed", Character.InputController.IsAimPressed);
+            Character.Animator.SetBool("IsShootPressed", Character.InputController.IsShootPressed);
             float deltaTime = Time.deltaTime;
             Vector3 movementInput = GetMovementInput();
 
@@ -155,14 +167,38 @@ namespace HeroicArcade.CC.Core
             Character.Animator.SetFloat("MoveSpeed",
                 new Vector3(Character.velocity.x, 0, Character.velocity.z).magnitude / Character.CurrentMaxMoveSpeed);
         }
-
+	
+	private void ChangeCameraPosition()
+	{
+	    switch(aimCameraOffset)
+	    {
+	    case AimCameraOffset.Left:
+	        aimCameraOffset = AimCameraOffset.Right;
+	        break;
+	    case AimCameraOffset.Right:
+	        aimCameraOffset = AimCameraOffset.Left;
+	        break;
+	    }
+	}
+	
         private void LateUpdate()
         {
             if (Character.InputController.IsAimPressed){
-            	cinemachineFreeLook.m_Priority = 1;
+            cinemachineFreeLook.m_Priority = 1;
+            switch(aimCameraOffset)
+            {
+	    case AimCameraOffset.Left:
+            	cinemachineLeft.m_Priority = 10;
+            	break;
+            case AimCameraOffset.Right:
+            	cinemachineRight.m_Priority = 10;
+            	break;
+            }
             }
             else{
                 cinemachineFreeLook.m_Priority = 10;
+                cinemachineLeft.m_Priority = 1;
+                cinemachineRight.m_Priority = 1;
             }
             if (isOnMovingPlatform)
                 ApplyPlatformMovement(movingPlatform);

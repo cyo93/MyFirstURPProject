@@ -6,11 +6,13 @@ namespace HeroicArcade.CC.Core
 {
     [System.Serializable] public class MoveInputEvent : UnityEvent<Vector2> {}
     [System.Serializable] public class CameraRecenterXEvent : UnityEvent<bool> { }
+    [System.Serializable] public class CameraChangeEvent : UnityEvent<bool> { }
 
     public sealed class InputController : MonoBehaviour
     {
         [SerializeField] MoveInputEvent moveInputEvent;
         [SerializeField] CameraRecenterXEvent cameraRecenterXEvent;
+        [SerializeField] CameraChangeEvent cameraChangeEvent;
 
         Controls controls;
         private void Awake()
@@ -29,6 +31,9 @@ namespace HeroicArcade.CC.Core
             
             controls.Gameplay.Aim.started += OnAim;
             controls.Gameplay.Aim.canceled += OnAim;
+            
+            controls.Gameplay.CameraChange.started += OnCameraChange;
+            controls.Gameplay.CameraChange.canceled += OnCameraChange;
         }
 
         private Vector2 moveInput;
@@ -55,6 +60,11 @@ namespace HeroicArcade.CC.Core
         private void OnRecenterX(InputAction.CallbackContext context)
         {
             cameraRecenterXEvent.Invoke(context.ReadValueAsButton());
+        }
+        
+        private void OnCameraChange(InputAction.CallbackContext context)
+        {
+            cameraChangeEvent.Invoke(context.ReadValueAsButton());
         }
 
         private void OnEnable()
