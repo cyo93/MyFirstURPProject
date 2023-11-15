@@ -10,10 +10,22 @@ namespace HeroicArcade.CC.Core
         [SerializeField] Animator animator;
         public Animator Animator { get => animator; }
 
+        public enum CameraStyle
+        {
+            Adventure,
+            Combat,
+        }
+
+
+        [SerializeField] CameraStyle camStyle;
+        public CameraStyle CamStyle { get => camStyle; set => camStyle = value; }
+
         [Header("Character Parameters")]
         [SerializeField] float maxWalkSpeed; //6
         public float CurrentMaxWalkSpeed { get => maxWalkSpeed; set => maxWalkSpeed = value; }
         [HideInInspector] public float CurrentMaxMoveSpeed;
+        [SerializeField] float turnSpeed;
+        public float TurnSpeed { get => turnSpeed; }
         [HideInInspector] public Vector3 velocity = Vector3.zero;
         [HideInInspector] public float velocityXZ = 0f;
         [SerializeField] float moveAcceleration;

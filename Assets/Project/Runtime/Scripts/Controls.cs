@@ -73,9 +73,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""CameraChange"",
+                    ""name"": ""AimSwap"",
                     ""type"": ""Button"",
-                    ""id"": ""81661cc5-b085-4e3f-b1c1-665cdcb9216c"",
+                    ""id"": ""a990b90d-fa27-48de-988e-91657eb03c36"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -272,6 +272,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""60731d9c-ee49-486f-ab8e-476c262dd94d"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""d00440a4-66cd-4694-8f24-dd675b08245f"",
                     ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
@@ -283,34 +294,23 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""60731d9c-ee49-486f-ab8e-476c262dd94d"",
-                    ""path"": ""<Keyboard>/leftShift"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Aim"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""7ec2d765-0d88-454f-aeac-20c78ad1ab82"",
+                    ""id"": ""b2544b2d-d9a1-4505-a4d0-762de513e68d"",
                     ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CameraChange"",
+                    ""action"": ""AimSwap"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""14e92531-5fb0-42c7-81d0-a0730435c02a"",
+                    ""id"": ""7c2adcf1-a5db-4511-a462-a50fa036f185"",
                     ""path"": ""<Gamepad>/rightStickPress"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CameraChange"",
+                    ""action"": ""AimSwap"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -326,7 +326,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Gameplay_Look = m_Gameplay.FindAction("Look", throwIfNotFound: true);
         m_Gameplay_CameraRecenterX = m_Gameplay.FindAction("CameraRecenterX", throwIfNotFound: true);
         m_Gameplay_Aim = m_Gameplay.FindAction("Aim", throwIfNotFound: true);
-        m_Gameplay_CameraChange = m_Gameplay.FindAction("CameraChange", throwIfNotFound: true);
+        m_Gameplay_AimSwap = m_Gameplay.FindAction("AimSwap", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -393,7 +393,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Look;
     private readonly InputAction m_Gameplay_CameraRecenterX;
     private readonly InputAction m_Gameplay_Aim;
-    private readonly InputAction m_Gameplay_CameraChange;
+    private readonly InputAction m_Gameplay_AimSwap;
     public struct GameplayActions
     {
         private @Controls m_Wrapper;
@@ -403,7 +403,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @Look => m_Wrapper.m_Gameplay_Look;
         public InputAction @CameraRecenterX => m_Wrapper.m_Gameplay_CameraRecenterX;
         public InputAction @Aim => m_Wrapper.m_Gameplay_Aim;
-        public InputAction @CameraChange => m_Wrapper.m_Gameplay_CameraChange;
+        public InputAction @AimSwap => m_Wrapper.m_Gameplay_AimSwap;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -428,9 +428,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Aim.started += instance.OnAim;
             @Aim.performed += instance.OnAim;
             @Aim.canceled += instance.OnAim;
-            @CameraChange.started += instance.OnCameraChange;
-            @CameraChange.performed += instance.OnCameraChange;
-            @CameraChange.canceled += instance.OnCameraChange;
+            @AimSwap.started += instance.OnAimSwap;
+            @AimSwap.performed += instance.OnAimSwap;
+            @AimSwap.canceled += instance.OnAimSwap;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -450,9 +450,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Aim.started -= instance.OnAim;
             @Aim.performed -= instance.OnAim;
             @Aim.canceled -= instance.OnAim;
-            @CameraChange.started -= instance.OnCameraChange;
-            @CameraChange.performed -= instance.OnCameraChange;
-            @CameraChange.canceled -= instance.OnCameraChange;
+            @AimSwap.started -= instance.OnAimSwap;
+            @AimSwap.performed -= instance.OnAimSwap;
+            @AimSwap.canceled -= instance.OnAimSwap;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -477,6 +477,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnCameraRecenterX(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
-        void OnCameraChange(InputAction.CallbackContext context);
+        void OnAimSwap(InputAction.CallbackContext context);
     }
 }

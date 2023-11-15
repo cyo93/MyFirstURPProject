@@ -1,18 +1,22 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using static HeroicArcade.CC.Core.InputController;
 
 namespace HeroicArcade.CC.Core
 {
     [System.Serializable] public class MoveInputEvent : UnityEvent<Vector2> {}
     [System.Serializable] public class CameraRecenterXEvent : UnityEvent<bool> { }
-    [System.Serializable] public class CameraChangeEvent : UnityEvent<bool> { }
+    [System.Serializable] public class CameraAimEvent : UnityEvent<bool> { }
+    [System.Serializable] public class AimSwapEvent : UnityEvent { }
 
     public sealed class InputController : MonoBehaviour
     {
         [SerializeField] MoveInputEvent moveInputEvent;
         [SerializeField] CameraRecenterXEvent cameraRecenterXEvent;
-        [SerializeField] CameraChangeEvent cameraChangeEvent;
+        [SerializeField] CameraAimEvent cameraAimEvent;
+        [SerializeField] AimSwapEvent aimSwapEvent;
+        
 
         Controls controls;
         private void Awake()
@@ -31,9 +35,9 @@ namespace HeroicArcade.CC.Core
             
             controls.Gameplay.Aim.started += OnAim;
             controls.Gameplay.Aim.canceled += OnAim;
-            
-            controls.Gameplay.CameraChange.started += OnCameraChange;
-            controls.Gameplay.CameraChange.canceled += OnCameraChange;
+
+            controls.Gameplay.AimSwap.started += OnAimSwap;
+
         }
 
         private Vector2 moveInput;
@@ -45,10 +49,11 @@ namespace HeroicArcade.CC.Core
         }
 	
 	
-	[HideInInspector] public bool IsAimPressed;
+	    [HideInInspector] public bool IsAimingPressed;
         private void OnAim(InputAction.CallbackContext context)
         {
-            IsAimPressed = context.ReadValueAsButton();
+            IsAimingPressed = context.ReadValueAsButton();
+            cameraAimEvent.Invoke(IsAimingPressed);
         }
         
         [HideInInspector] public bool IsJumpPressed;
@@ -61,10 +66,10 @@ namespace HeroicArcade.CC.Core
         {
             cameraRecenterXEvent.Invoke(context.ReadValueAsButton());
         }
-        
-        private void OnCameraChange(InputAction.CallbackContext context)
+
+        private void OnAimSwap(InputAction.CallbackContext context)
         {
-            cameraChangeEvent.Invoke(context.ReadValueAsButton());
+            aimSwapEvent.Invoke();
         }
 
         private void OnEnable()
