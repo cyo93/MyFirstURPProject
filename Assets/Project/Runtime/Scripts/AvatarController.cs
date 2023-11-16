@@ -91,7 +91,7 @@ namespace HeroicArcade.CC.Core
         private void Update()
         {
             Character.Animator.SetBool("IsAimPressed", Character.InputController.IsAimingPressed);
-            //Character.Animator.SetBool("IsShootPressed", Character.InputController.IsShootPressed);
+            Character.Animator.SetBool("IsShootPressed", Character.InputController.IsShootPressed);
             float deltaTime = Time.deltaTime;
             Vector3 movementInput = GetMovementInput();
 
