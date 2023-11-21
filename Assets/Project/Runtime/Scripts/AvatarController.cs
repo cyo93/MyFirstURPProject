@@ -27,10 +27,6 @@ namespace HeroicArcade.CC.Core
 
         public float moveSpeed = 5f;
 
-        public float jumpSpeed = 8f;
-
-        public float rotationSpeed = 720f;
-
         public float gravity = -25f;
 
         public CharacterCapsule capsule;
@@ -92,6 +88,7 @@ namespace HeroicArcade.CC.Core
         {
             Character.Animator.SetBool("IsAimPressed", Character.InputController.IsAimingPressed);
             Character.Animator.SetBool("IsShootPressed", Character.InputController.IsShootPressed);
+            Character.Animator.SetBool("IsSprintPressed", Character.InputController.IsSprintPressed);
             float deltaTime = Time.deltaTime;
             Vector3 movementInput = GetMovementInput();
 
@@ -106,20 +103,21 @@ namespace HeroicArcade.CC.Core
 
             bool groundDetected = DetectGroundAndCheckIfGrounded(out bool isGrounded, out GroundInfo groundInfo);
 
+            Character.Animator.SetBool("IsJumping", !isGrounded);
+
             SetGroundedIndicatorColor(isGrounded);
 
             isOnMovingPlatform = false;
 
             if (isGrounded && Character.InputController.IsJumpPressed)
             {
-                verticalSpeed = jumpSpeed;
+                verticalSpeed = Character.jumpSpeed;
                 nextUngroundedTime = -1f;
                 isGrounded = false;
             }
 
             if (isGrounded)
             {
-            	Character.Animator.SetBool("IsJumping", false);
                 mover.mode = CharacterMover.Mode.Walk;
                 verticalSpeed = 0f;
 
@@ -128,7 +126,6 @@ namespace HeroicArcade.CC.Core
             }
             else
             {
-            	Character.Animator.SetBool("IsJumping", true);
                 mover.mode = CharacterMover.Mode.SimpleSlide;
 
                 BounceDownIfTouchedCeiling();
@@ -161,9 +158,13 @@ namespace HeroicArcade.CC.Core
             }
 
             RotateTowards(velocity);
+
+
+            Character.CurrentMaxMoveSpeed =
+                Character.InputController.IsSprintPressed ? Character.CurrentMaxSprintSpeed : Character.CurrentMaxWalkSpeed;
+
             mover.Move(velocity * deltaTime, groundDetected, groundInfo, overlapCount, overlaps, moveContacts, out contactCount);
 
-            Character.CurrentMaxMoveSpeed = 3;
             Character.Animator.SetFloat("MoveSpeed",
                 new Vector3(Character.velocity.x, 0, Character.velocity.z).magnitude / Character.CurrentMaxMoveSpeed);
         }
@@ -250,16 +251,16 @@ namespace HeroicArcade.CC.Core
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Character.TurnSpeed * Time.deltaTime);
         }
 
-        private void RotateTowards(in Vector3 direction)
-        {
-            Vector3 flatDirection = Vector3.ProjectOnPlane(direction, transform.up);
+        //private void RotateTowards(in Vector3 direction)
+        //{
+        //    Vector3 flatDirection = Vector3.ProjectOnPlane(direction, transform.up);
 
-            if (flatDirection.sqrMagnitude < 1E-06f)
-                return;
+        //    if (flatDirection.sqrMagnitude < 1E-06f)
+        //        return;
 
-            Quaternion targetRotation = Quaternion.LookRotation(flatDirection, transform.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        }
+        //    Quaternion targetRotation = Quaternion.LookRotation(flatDirection, transform.up);
+        //    transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        //}
 
         private void ApplyPlatformMovement(MovingPlatform movingPlatform)
         {

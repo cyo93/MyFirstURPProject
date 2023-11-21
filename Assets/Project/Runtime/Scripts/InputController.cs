@@ -42,6 +42,10 @@ namespace HeroicArcade.CC.Core
             controls.Gameplay.Shoot.performed += OnShoot;
             controls.Gameplay.Shoot.canceled += OnShoot;
 
+
+            controls.Gameplay.Sprint.started += OnSprint;
+            controls.Gameplay.Sprint.canceled += OnSprint;
+
         }
 
         private Vector2 moveInput;
@@ -71,6 +75,13 @@ namespace HeroicArcade.CC.Core
         {
             IsShootPressed = context.ReadValueAsButton();
         }
+
+        [HideInInspector] public bool IsSprintPressed;
+        private void OnSprint(InputAction.CallbackContext context)
+        {
+            IsSprintPressed = context.ReadValueAsButton();
+        }
+
         private void OnRecenterX(InputAction.CallbackContext context)
         {
             cameraRecenterXEvent.Invoke(context.ReadValueAsButton());
