@@ -639,7 +639,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1570542135993646258}
-  m_LocalRotation: {x: -0.114537254, y: 0.0000000020924782, z: -4.9746113e-10, w: 0.993419}
+  m_LocalRotation: {x: -0.114537254, y: -0.0000000020924773, z: 4.974609e-10, w: 0.993419}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1044,7 +1044,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3736513352770528939}
-  m_LocalRotation: {x: -0.114537254, y: -0.0000000020924782, z: 4.9746113e-10, w: 0.993419}
+  m_LocalRotation: {x: -0.114537254, y: 0.0000000020924773, z: -4.974609e-10, w: 0.993419}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2797,6 +2797,7 @@ MonoBehaviour:
   IsAimingPressed: 0
   IsJumpPressed: 0
   IsShootPressed: 0
+  IsSprintPressed: 0
 --- !u!114 &8255175504369370067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3112,13 +3113,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 544c51d49e3571047b53b9d0e9acaa54, type: 2}
     - target: {fileID: 9500000, guid: a5674d01884853d4e8f2386a171e14d9, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'Ellen_Chest'\n\tTransform 'Ellen_Root'\n\tTransform
-        'Ellen_Spine'\n\tTransform 'Ellen_UpperChest'\n\tTransform 'Ellen_Hips'\n\tTransform
-        'Ellen_Left_Toes'\n\tTransform 'Ellen_Left_Arm'\n\tTransform 'Ellen_Left_UpperLeg'\n\tTransform
-        'Ellen_Right_UpperArm'\n\tTransform 'Ellen_Chest'\n\tand more ...\n\tFrom
-        animation clip 'EllenRunForward'"
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3229,7 +3224,6 @@ MonoBehaviour:
   aimCameraRight: {fileID: 2388518685376155053}
   aimCameraOffset: 1
   moveSpeed: 5
-  jumpSpeed: 8
   gravity: -25
   capsule: {fileID: 99986291973469319}
   mover: {fileID: 2943202517137127094}
@@ -3250,8 +3244,9 @@ MonoBehaviour:
   inputController: {fileID: 6686926232290693181}
   animator: {fileID: 8905147735715577107}
   camStyle: 0
-  maxWalkSpeed: 5
-  maxSprintSpeed: 0
+  maxWalkSpeed: 3
+  maxSprintSpeed: 6
+  jumpSpeed: 8
   CurrentMaxMoveSpeed: 0
   turnSpeed: 720
   velocity: {x: 0, y: 0, z: 0}
