@@ -25,6 +25,8 @@ namespace HeroicArcade.CC.Core
         }
         public AimCameraOffset aimCameraOffset = AimCameraOffset.Left;
 
+        Target target2;
+
         public float moveSpeed = 5f;
 
         public float gravity = -25f;
@@ -162,6 +164,39 @@ namespace HeroicArcade.CC.Core
 
             Character.CurrentMaxMoveSpeed =
                 Character.InputController.IsSprintPressed ? Character.CurrentMaxSprintSpeed : Character.CurrentMaxWalkSpeed;
+
+            if (Character.InputController.IsAimingPressed)
+            {
+                ////Character.Animator.SetBool("IsAimPressed", Character.InputController.IsAimPressed);
+                target2 = Character.AutoAiming.StartAiming();
+
+                //if (Character.InputController.IsShootPressed
+                //    && !(Character.InputController.IsSprintPressed && Character.velocityXZ >= 1E-06f)
+                //    && !Character.InputController.IsJumpPressed)
+                //{
+                //    Character.Rig1.weight = 1;
+                //}
+                ////Character.Animator.SetBool("IsShootPressed", target2 != null && Character.InputController.IsShootPressed);
+                if (target2 != null
+                    && Character.InputController.IsShootPressed
+                    && !(Character.InputController.IsSprintPressed && Character.velocityXZ >= 1E-06f)
+                    && !Character.InputController.IsJumpPressed)
+                {
+                    //fsmState = FSMState.Shooting;
+                    Character.AutoAiming.StartFiring(target2);
+                }
+                else
+                {
+                    //Character.Rig1.weight = 0;
+                }
+            }
+            else
+            {
+                ////Character.Animator.SetBool("IsAimingPressed", Character.InputController.IsAimingPressed);
+                ////Character.Animator.SetBool("IsShootPressed", Character.InputController.IsShootPressed);
+                //Character.Rig1.weight = 0;
+                Character.AutoAiming.StopAiming();
+            }
 
             mover.Move(velocity * deltaTime, groundDetected, groundInfo, overlapCount, overlaps, moveContacts, out contactCount);
 
