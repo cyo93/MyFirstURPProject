@@ -168,7 +168,7 @@ namespace HeroicArcade.CC.Core
             if (Character.InputController.IsAimingPressed)
             {
                 ////Character.Animator.SetBool("IsAimPressed", Character.InputController.IsAimPressed);
-                //target2 = Character.AutoAiming.StartAiming();
+                target2 = Character.AutoAiming.StartAiming();
 
                 //if (Character.InputController.IsShootPressed
                 //    && !(Character.InputController.IsSprintPressed && Character.velocityXZ >= 1E-06f)
@@ -183,7 +183,7 @@ namespace HeroicArcade.CC.Core
                     && !Character.InputController.IsJumpPressed)
                 {
                     //fsmState = FSMState.Shooting;
-                    //Character.AutoAiming.StartFiring(target2);
+                    Character.AutoAiming.StartFiring(target2);
                 }
                 else
                 {
@@ -195,7 +195,7 @@ namespace HeroicArcade.CC.Core
                 ////Character.Animator.SetBool("IsAimingPressed", Character.InputController.IsAimingPressed);
                 ////Character.Animator.SetBool("IsShootPressed", Character.InputController.IsShootPressed);
                 //Character.Rig1.weight = 0;
-                //Character.AutoAiming.StopAiming();
+                Character.AutoAiming.StopAiming();
             }
 
             mover.Move(velocity * deltaTime, groundDetected, groundInfo, overlapCount, overlaps, moveContacts, out contactCount);
