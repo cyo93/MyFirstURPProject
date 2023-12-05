@@ -32,6 +32,7 @@ namespace HeroicArcade.CC
 
         private void Awake()
         {
+            weapon.weaponCurrentEnergy.Value = weapon.weaponMaxEnergy.Value;
             target1 = null;
             target2 = null;
             crosshairWhiteCircleBlank.transform.gameObject.SetActive(false);

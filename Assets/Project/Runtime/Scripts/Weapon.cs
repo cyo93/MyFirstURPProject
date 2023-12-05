@@ -5,6 +5,7 @@ namespace HeroicArcade.CC
 {
     public class Weapon : MonoBehaviour
     {
+        public FloatReference weaponMaxEnergy = null;
         public FloatReference weaponCurrentEnergy = null;
         public FloatReference weaponEnergyConsumption = null;
         public FloatReference hitImpactStrength = null;
