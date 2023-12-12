@@ -98,7 +98,9 @@ namespace HeroicArcade.CC.Core
             if (Character.velocityXZ > Character.CurrentMaxMoveSpeed)
                 Character.velocityXZ = Character.CurrentMaxMoveSpeed;
 
-            Vector3 velocity = moveSpeed * movementInput;
+            //.velocity = moveSpeed * movementInput;
+
+            //Character.velocity = Vector3.Lerp(prevVelocity, Character.velocity, Character.acceleration);
 
             Character.velocity = Character.velocityXZ * movementInput;
             HandleOverlaps();
@@ -137,7 +139,7 @@ namespace HeroicArcade.CC.Core
                 if (verticalSpeed < minVerticalSpeed)
                     verticalSpeed = minVerticalSpeed;
 
-                velocity += verticalSpeed * transform.up;
+                Character.velocity += verticalSpeed * transform.up;
             }
 
             if (isGrounded)
@@ -156,10 +158,10 @@ namespace HeroicArcade.CC.Core
                     //Character.Animator.SetBool("IsSprintPressed", Character.InputController.IsSprintPressed);
                 }
 
-                Character.CurrentMaxMoveSpeed = Character.CurrentMaxWalkSpeed;
+                //Character.CurrentMaxMoveSpeed = Character.CurrentMaxWalkSpeed;
             }
 
-            RotateTowards(velocity);
+            RotateTowards(Character.velocity);
 
 
             Character.CurrentMaxMoveSpeed =
@@ -198,7 +200,7 @@ namespace HeroicArcade.CC.Core
                 Character.AutoAiming.StopAiming();
             }
 
-            mover.Move(velocity * deltaTime, groundDetected, groundInfo, overlapCount, overlaps, moveContacts, out contactCount);
+            mover.Move(Character.velocity * deltaTime, groundDetected, groundInfo, overlapCount, overlaps, moveContacts, out contactCount);
 
             Character.Animator.SetFloat("MoveSpeed",
                 new Vector3(Character.velocity.x, 0, Character.velocity.z).magnitude / Character.CurrentMaxMoveSpeed);

@@ -36,6 +36,8 @@ namespace HeroicArcade.CC.Core
         [HideInInspector] public Vector3 velocity = Vector3.zero;
         [HideInInspector] public float velocityXZ = 0f;
         [SerializeField] float moveAcceleration;
+        [SerializeField] float moveDeceleration;
         public float MoveAcceleration { get => moveAcceleration; set => moveAcceleration = value; }
+        public float MoveDeceleration { get => moveDeceleration; set => moveDeceleration = value; }
     }
 }
