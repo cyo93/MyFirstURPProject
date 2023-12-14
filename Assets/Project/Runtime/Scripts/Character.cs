@@ -28,6 +28,8 @@ namespace HeroicArcade.CC.Core
         [SerializeField] public float jumpSpeed;
         [HideInInspector] public float CurrentMaxMoveSpeed;
         [SerializeField] float turnSpeed;
+        [SerializeField] float frictionAcceleration;
+        public float FrictionAcceleration { get => frictionAcceleration; set => frictionAcceleration = value; }
 
         [SerializeField] AutoAiming autoAiming;
         public AutoAiming AutoAiming { get => autoAiming; }

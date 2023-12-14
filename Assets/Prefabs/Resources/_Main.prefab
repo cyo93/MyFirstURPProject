@@ -4125,6 +4125,7 @@ MonoBehaviour:
   jumpSpeed: 8
   CurrentMaxMoveSpeed: 0
   turnSpeed: 720
+  frictionAcceleration: -15
   autoAiming: {fileID: 7875980899276660872}
   velocity: {x: 0, y: 0, z: 0}
   velocityXZ: 0

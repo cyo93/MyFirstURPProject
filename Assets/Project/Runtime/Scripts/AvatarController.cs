@@ -85,24 +85,44 @@ namespace HeroicArcade.CC.Core
             cameraTransform = Camera.main.transform;
             mover.canClimbSteepSlope = true;
         }
-	
+        Vector3 movementInput;
+        Vector3 oldMovementInput;
         private void Update()
         {
             Character.Animator.SetBool("IsAimPressed", Character.InputController.IsAimingPressed);
             Character.Animator.SetBool("IsShootPressed", Character.InputController.IsShootPressed);
             Character.Animator.SetBool("IsSprintPressed", Character.InputController.IsSprintPressed);
             float deltaTime = Time.deltaTime;
-            Vector3 movementInput = GetMovementInput();
-
-            Character.velocityXZ += Character.MoveAcceleration * deltaTime;
+            if(movementInput.sqrMagnitude >= 1E-06f)
+            {
+                oldMovementInput = movementInput;
+            }
+            movementInput = GetMovementInput();
+            
+            if (movementInput.sqrMagnitude >= 1E-06f)
+            {
+                Character.velocityXZ += (Character.MoveAcceleration * deltaTime);
+                Character.velocity = Character.velocityXZ * movementInput;
+            }
+            else
+            {
+                oldMovementInput *= 0.9f;
+                Character.velocityXZ += (Character.FrictionAcceleration * deltaTime);
+                Character.velocity = Character.velocityXZ * oldMovementInput;
+                
+            }
+            
             if (Character.velocityXZ > Character.CurrentMaxMoveSpeed)
                 Character.velocityXZ = Character.CurrentMaxMoveSpeed;
+            
 
-            //.velocity = moveSpeed * movementInput;
+            if (Character.velocityXZ < 0)
+            {
+                Character.velocityXZ = 0;
+            }
 
-            //Character.velocity = Vector3.Lerp(prevVelocity, Character.velocity, Character.acceleration);
 
-            Character.velocity = Character.velocityXZ * movementInput;
+            //Character.velocity = Character.velocityXZ * movementInput;
             HandleOverlaps();
 
             bool groundDetected = DetectGroundAndCheckIfGrounded(out bool isGrounded, out GroundInfo groundInfo);
@@ -144,11 +164,11 @@ namespace HeroicArcade.CC.Core
 
             if (isGrounded)
             {
-                if (movementInput.sqrMagnitude < 1E-06f)
+/*                if (movementInput.sqrMagnitude < 1E-06f)
                 {
                     Character.velocityXZ = 0f;
                     //Character.Animator.SetBool("IsSprintPressed", false);
-                }
+                }*/
 
                 Character.Animator.SetFloat("MoveSpeed",
                     new Vector3(Character.velocity.x, 0, Character.velocity.z).magnitude / Character.CurrentMaxMoveSpeed);
@@ -181,7 +201,7 @@ namespace HeroicArcade.CC.Core
                 ////Character.Animator.SetBool("IsShootPressed", target2 != null && Character.InputController.IsShootPressed);
                 if (target2 != null
                     && Character.InputController.IsShootPressed
-                    && !(Character.InputController.IsSprintPressed && Character.velocityXZ >= 1E-06f)
+                    && !(Character.InputController.IsSprintPressed /*&& Character.velocityXZ >= 1E-06f*/)
                     && !Character.InputController.IsJumpPressed)
                 {
                     //fsmState = FSMState.Shooting;
