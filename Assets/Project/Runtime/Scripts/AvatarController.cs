@@ -97,7 +97,11 @@ namespace HeroicArcade.CC.Core
             {
                 oldMovementInput = movementInput;
             }
-            movementInput = GetMovementInput();
+            if (!Character.Animator.GetCurrentAnimatorStateInfo(0).IsName("SPAWN"))
+            {
+                movementInput = GetMovementInput();
+            }
+            
             
             if (movementInput.sqrMagnitude >= 1E-06f)
             {
@@ -133,7 +137,7 @@ namespace HeroicArcade.CC.Core
 
             isOnMovingPlatform = false;
 
-            if (isGrounded && Character.InputController.IsJumpPressed)
+            if (isGrounded && Character.InputController.IsJumpPressed && !Character.Animator.GetCurrentAnimatorStateInfo(0).IsName("SPAWN"))
             {
                 verticalSpeed = Character.jumpSpeed;
                 nextUngroundedTime = -1f;
@@ -187,7 +191,7 @@ namespace HeroicArcade.CC.Core
             Character.CurrentMaxMoveSpeed =
                 Character.InputController.IsSprintPressed ? Character.CurrentMaxSprintSpeed : Character.CurrentMaxWalkSpeed;
 
-            if (Character.InputController.IsAimingPressed)
+            if (Character.InputController.IsAimingPressed && !Character.Animator.GetCurrentAnimatorStateInfo(0).IsName("SPAWN"))
             {
                 ////Character.Animator.SetBool("IsAimPressed", Character.InputController.IsAimPressed);
                 target2 = Character.AutoAiming.StartAiming();
@@ -202,7 +206,7 @@ namespace HeroicArcade.CC.Core
                 if (target2 != null
                     && Character.InputController.IsShootPressed
                     && !(Character.InputController.IsSprintPressed /*&& Character.velocityXZ >= 1E-06f*/)
-                    && !Character.InputController.IsJumpPressed)
+                    && !Character.InputController.IsJumpPressed && !Character.Animator.GetCurrentAnimatorStateInfo(0).IsName("SPAWN"))
                 {
                     //fsmState = FSMState.Shooting;
                     Character.AutoAiming.StartFiring(target2);
