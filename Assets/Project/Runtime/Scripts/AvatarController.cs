@@ -89,6 +89,10 @@ namespace HeroicArcade.CC.Core
         Vector3 oldMovementInput;
         private void Update()
         {
+            if (Character.Animator.GetCurrentAnimatorStateInfo(0).IsName("SPAWN"))
+            {
+                return;
+            }
             Character.Animator.SetBool("IsAimPressed", Character.InputController.IsAimingPressed);
             Character.Animator.SetBool("IsShootPressed", Character.InputController.IsShootPressed);
             Character.Animator.SetBool("IsSprintPressed", Character.InputController.IsSprintPressed);
@@ -97,12 +101,9 @@ namespace HeroicArcade.CC.Core
             {
                 oldMovementInput = movementInput;
             }
-            if (!Character.Animator.GetCurrentAnimatorStateInfo(0).IsName("SPAWN"))
-            {
-                movementInput = GetMovementInput();
-            }
-            
-            
+            movementInput = GetMovementInput();
+
+
             if (movementInput.sqrMagnitude >= 1E-06f)
             {
                 Character.velocityXZ += (Character.MoveAcceleration * deltaTime);
@@ -137,7 +138,7 @@ namespace HeroicArcade.CC.Core
 
             isOnMovingPlatform = false;
 
-            if (isGrounded && Character.InputController.IsJumpPressed && !Character.Animator.GetCurrentAnimatorStateInfo(0).IsName("SPAWN"))
+            if (isGrounded && Character.InputController.IsJumpPressed)
             {
                 verticalSpeed = Character.jumpSpeed;
                 nextUngroundedTime = -1f;
@@ -206,7 +207,7 @@ namespace HeroicArcade.CC.Core
                 if (target2 != null
                     && Character.InputController.IsShootPressed
                     && !(Character.InputController.IsSprintPressed /*&& Character.velocityXZ >= 1E-06f*/)
-                    && !Character.InputController.IsJumpPressed && !Character.Animator.GetCurrentAnimatorStateInfo(0).IsName("SPAWN"))
+                    && !Character.InputController.IsJumpPressed)
                 {
                     //fsmState = FSMState.Shooting;
                     Character.AutoAiming.StartFiring(target2);
