@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using MenteBacata.ScivoloCharacterController;
 using MenteBacata.ScivoloCharacterControllerDemo;
 //using MenteBacata.ScivoloCharacterControllerDemo;
@@ -97,21 +98,27 @@ namespace HeroicArcade.CC.Core
             Character.Animator.SetBool("IsShootPressed", Character.InputController.IsShootPressed);
             Character.Animator.SetBool("IsSprintPressed", Character.InputController.IsSprintPressed);
             float deltaTime = Time.deltaTime;
-            if(movementInput.sqrMagnitude >= 1E-06f)
+            if(movementInput.sqrMagnitude >= 0.05)
             {
                 oldMovementInput = movementInput;
             }
             movementInput = GetMovementInput();
 
 
-            if (movementInput.sqrMagnitude >= 1E-06f)
+            if (movementInput.sqrMagnitude >= 0.05)
             {
                 Character.velocityXZ += (Character.MoveAcceleration * deltaTime);
                 Character.velocity = Character.velocityXZ * movementInput;
             }
             else
             {
+                if(Math.Abs(oldMovementInput.x) < 0.05 && Math.Abs(oldMovementInput.z) < 0.05){
+                    oldMovementInput.x = 0;
+                    oldMovementInput.y = 0;
+                    oldMovementInput.z = 0;
+                }
                 oldMovementInput *= 0.9f;
+
                 Character.velocityXZ += (Character.FrictionAcceleration * deltaTime);
                 Character.velocity = Character.velocityXZ * oldMovementInput;
                 

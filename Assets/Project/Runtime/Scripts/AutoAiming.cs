@@ -195,7 +195,7 @@ namespace HeroicArcade.CC
         TrailRenderer tracer;
         public void StartFiring(Target target)
         {
-            weapon.weaponCurrentEnergy.Value -= weapon.weaponEnergyConsumption.Value;
+            weapon.weaponCurrentEnergy.Value -= (weapon.weaponEnergyConsumption.Value * Time.deltaTime);
             if (weapon.weaponCurrentEnergy.Value < 0)
             {
                 weapon.weaponCurrentEnergy.Value = 0;
